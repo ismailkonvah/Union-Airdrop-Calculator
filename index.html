@@ -14,9 +14,12 @@
       align-items: center;
       padding: 40px 20px;
     }
+
     h1 {
       color: #00ffcc;
+      text-align: center;
     }
+
     .calculator {
       background: #1c1f26;
       padding: 20px;
@@ -25,6 +28,7 @@
       max-width: 400px;
       width: 100%;
     }
+
     input, select, button {
       width: 100%;
       padding: 10px;
@@ -33,17 +37,33 @@
       border: none;
       font-size: 16px;
     }
+
     button {
       background: #00ffcc;
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s;
     }
+
+    button:hover {
+      background: #00e6b8;
+    }
+
     .result {
       margin-top: 20px;
       font-size: 18px;
       font-weight: bold;
       color: #00ffcc;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 22px;
+      }
+      .calculator {
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -56,19 +76,39 @@
     <label for="level">Select Your Level:</label>
     <select id="level">
       <option value="0">Select level</option>
-      <option value="4">Level 4</option>
-      <option value="5">Level 5</option>
-      <option value="6">Level 6</option>
-      <option value="7">Level 7</option>
-      <option value="8">Level 8</option>
-      <option value="9">Level 9</option>
-      <option value="10">Level 10</option>
+      <option value="4">Level 4 (×1.0)</option>
+      <option value="5">Level 5 (×1.1)</option>
+      <option value="6">Level 6 (×1.25)</option>
+      <option value="7">Level 7 (×1.5)</option>
+      <option value="8">Level 8 (×1.75)</option>
+      <option value="9">Level 9 (×2.0)</option>
+      <option value="10">Level 10 (×2.5)</option>
+    </select>
+
+    <label for="marketCap">Select Estimated Market Cap:</label>
+    <select id="marketCap">
+      <option value="0">Select market cap</option>
+      <option value="300000000">$300M</option>
+      <option value="500000000">$500M</option>
+      <option value="750000000">$750M</option>
+      <option value="1000000000">$1B</option>
+      <option value="2500000000">$2.5B</option>
+      <option value="5000000000">$5B</option>
     </select>
 
     <button onclick="calculateReward()">Calculate</button>
+    <button onclick="resetForm()">Reset</button>
 
     <div class="result" id="result"></div>
   </div>
+
+  <p style="text-align: center; font-size: 14px; color: #ccc; margin-top: 20px;">
+    Made by 
+    <a href="https://x.com/boringcrypto_" target="_blank" style="color: #00ffcc; text-decoration: none;">
+      <img src="https://abs.twimg.com/icons/apple-touch-icon-192x192.png" alt="X" style="height: 14px; vertical-align: middle; margin-right: 4px;">
+      @boringcrypto_
+    </a>
+  </p>
 
   <script>
     function getMultiplier(level) {
@@ -87,16 +127,43 @@
     function calculateReward() {
       const xp = parseFloat(document.getElementById('xp').value);
       const level = parseInt(document.getElementById('level').value);
+      const marketCap = parseFloat(document.getElementById('marketCap').value);
       const resultDiv = document.getElementById('result');
+      const totalSupply = 10_000_000_000;
 
-      if (isNaN(xp) || level < 4) {
+      if (isNaN(xp) || xp <= 0 || level < 4) {
         resultDiv.innerText = "You are not eligible for airdrop.";
         return;
       }
 
       const multiplier = getMultiplier(level);
-      const tokens = xp * 10 * multiplier;
-      resultDiv.innerText = `🎉 You are eligible for ${tokens.toLocaleString()} tokens!`;
+      const base = xp * 10;
+      const tokens = base * multiplier;
+
+      if (!isNaN(marketCap) && marketCap > 0) {
+        const tokenPrice = marketCap / totalSupply;
+        const dollarValue = tokens * tokenPrice;
+
+        resultDiv.innerHTML = `
+          🎉 You are eligible for <strong>${tokens.toLocaleString()}</strong> tokens!<br>
+          🧮 Token Price: <strong>$${tokenPrice.toFixed(4)}</strong><br>
+          💰 Estimated Airdrop Value: <strong>$${dollarValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong><br>
+          (Base: ${base.toLocaleString()} × Multiplier: ${multiplier})
+        `;
+      } else {
+        resultDiv.innerHTML = `
+          🎉 You are eligible for <strong>${tokens.toLocaleString()}</strong> tokens!<br>
+          (Base: ${base.toLocaleString()} × Multiplier: ${multiplier})<br>
+          <span style="color:#aaa;">(Select a market cap to estimate value)</span>
+        `;
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('xp').value = '';
+      document.getElementById('level').value = '0';
+      document.getElementById('marketCap').value = '0';
+      document.getElementById('result').innerText = '';
     }
   </script>
 </body>
