@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Union Airdrop Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0e1015;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      color: #00ffcc;
+    }
+    .calculator {
+      background: #1c1f26;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,255,204,0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Union Airdrop Calculator</h1>
+  <div class="calculator">
+    <label for="xp">Enter Your XP:</label>
+    <input type="number" id="xp" placeholder="e.g., 120" />
+
+    <label for="level">Select Your Level:</label>
+    <select id="level">
+      <option value="0">Select level</option>
+      <option value="4">Level 4</option>
+      <option value="5">Level 5</option>
+      <option value="6">Level 6</option>
+      <option value="7">Level 7</option>
+      <option value="8">Level 8</option>
+      <option value="9">Level 9</option>
+      <option value="10">Level 10</option>
+    </select>
+
+    <button onclick="calculateReward()">Calculate</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function getMultiplier(level) {
+      const multipliers = {
+        4: 1.0,
+        5: 1.1,
+        6: 1.25,
+        7: 1.5,
+        8: 1.75,
+        9: 2.0,
+        10: 2.5
+      };
+      return multipliers[level] || 0;
+    }
+
+    function calculateReward() {
+      const xp = parseFloat(document.getElementById('xp').value);
+      const level = parseInt(document.getElementById('level').value);
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(xp) || level < 4) {
+        resultDiv.innerText = "You are not eligible for airdrop.";
+        return;
+      }
+
+      const multiplier = getMultiplier(level);
+      const tokens = xp * 10 * multiplier;
+      resultDiv.innerText = `🎉 You are eligible for ${tokens.toLocaleString()} tokens!`;
+    }
+  </script>
+</body>
+</html>
